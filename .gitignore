@@ -1,0 +1,28 @@
+# dependencies
+/node_modules
+
+# misc
+.DS_Store
+.env.*
+
+# IDE
+/.idea
+/.vscode
+
+# git
+/git.json
+
+# builders
+/artifacts
+/cache
+/dist
+/typechain-types
+/*.tar
+/*.tar.gz
+/_dev
+/_release
+.deps
+artifacts
+
+# db
+/database

@@ -1,0 +1,158 @@
+cluster:
+  name: cluster-name
+  id: b5f8ca25-a45c-4e94-8146-a284e9ec5650
+  description: 'cluster description'
+
+network:
+  ip: 0.0.0.0
+  httpServer:
+    enable: true
+    port: 57550
+  httpsServer:
+    enable: false
+    port: 57650
+    mutualTLS: false
+
+serviceInfo:
+  version: v1
+  hostName: HostName
+  serviceName: ether-crawler
+  processName: ether-crawler
+  ip: 127.0.0.1
+  port: 57550
+  tags:
+    - microservice
+    - typescript
+    - docker
+  id: cf7c85fa-2556-415e-ad15-1cc1311f7b89
+
+log:
+  level: DEBUG
+
+custom:
+  # Default network
+  defaultNetwork:
+    # Chain name
+    chain: polygon
+    # Network name
+    network: mumbai
+    # Use provider pool
+    providerPool: false
+
+  # Database
+  database:
+    postgres:
+      uri: 'postgresql://postgres:example@localhost:5432/mock_crawler'
+      table: 'transactions'
+    mysql:
+      uri: 'mysql://root:example@localhost:3306/mock_crawler'
+      table: 'transactions'
+    sqlite:
+      uri: 'sqlite://./database/crawler/crawler.db'
+      table: 'transactions'
+
+  # RESTFul API response code
+  apiResponseCode:
+    OK: 'YOUR_RESPONSE_CODE'
+    ERROR: 'YOUR_RESPONSE_CODE'
+
+  tx:
+    # GasLimit coefficient (%)
+    # Example: 110 means gasLimit * 110%
+    gasLimitC: 110
+    # Transfer confirmations
+    confirmations: 3
+
+  # Crawler config
+  crawler:
+    enable: true
+
+    # Transaction type
+    txType:
+      # 'transfer' means transfer coin from an address to another address
+      - transfer
+
+    # Callback URL
+    callback: ''
+
+    # Pull from block number (history or future block)
+    fromBlock: 0
+
+    # Get blocks range
+    maxBlockRange: 50
+
+    # Push job intervals (unit: ms)
+    pushJobIntervals: 200
+
+    # Execute job concurrency
+    executeJobConcurrency: 10
+
+    # Supported Database: postgres, mysql or sqlite
+    db: postgres
+
+  networks:
+    # Ethereum
+    ethereum:
+      mainnet:
+        # Chain ID
+        chainId: 1
+        # Provider URL
+        provider:
+          - 'YOUR PROVIDER'
+        # Blockchain explorer URL
+        browser: https://etherscan.io
+
+      ropsten:
+        chainId: 3
+        provider:
+          - 'YOUR PROVIDER'
+        browser: https://ropsten.etherscan.io
+
+      rinkeby:
+        chainId: 4
+        provider:
+          - 'YOUR PROVIDER'
+        browser: https://rinkeby.etherscan.io
+
+      goerli:
+        chainId: 5
+        provider:
+          - 'YOUR PROVIDER'
+        browser: https://goerli.etherscan.io
+
+    # Polygon
+    # Ref: https://docs.polygon.technology/docs/develop/network-details/network
+    polygon:
+      mainnet:
+        chainId: 137
+        provider:
+          - https://polygon-rpc.com
+          - https://matic-mainnet.chainstacklabs.com
+          - https://rpc-mainnet.maticvigil.com
+          - https://rpc-mainnet.matic.quiknode.pro
+        browser: https://polygonscan.com
+
+      mumbai:
+        chainId: 80001
+        provider:
+          - https://rpc-mumbai.matic.today
+          - https://matic-mumbai.chainstacklabs.com
+        browser: https://mumbai.polygonscan.com
+
+    # zkSync 2
+    zkSync:
+      # zkSync 2.0 (zkSync alpha testnet)
+      # Ref: https://v2-docs.zksync.io/dev/testnet/important-links.html
+      alpha:
+        chainId: 280
+        provider:
+          - https://zksync2-testnet.zksync.dev
+        browser: https://zksync2-testnet.zkscan.io
+
+    # Local Development
+    dev:
+      local:
+        chainId: 666
+        provider:
+          - http://localhost:8545
+        browser: http://localhost:4000
