@@ -2,7 +2,7 @@
 
 [![GitHub Actions](https://github.com/jovijovi/ether-crawler/workflows/Test/badge.svg)](https://github.com/jovijovi/ether-crawler)
 
-A transaction crawler the Ethereum ecosystem.
+A transaction crawler for the Ethereum ecosystem.
 
 ## Features
 
