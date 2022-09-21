@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+  pedrojs:
+    container_name: devenv_ether_crawler
+    image: ether-crawler:latest
+    restart: always
+    volumes:
+      - ../conf:/opt/app/conf
+      - ../database:/opt/app/database
+    ports:
+      - "57550:57550"
