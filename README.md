@@ -74,6 +74,7 @@ A transaction crawler for the Ethereum ecosystem.
 ## Roadmap
 
 - Support more transaction type
+- Improve performance
 
 ## License
 
