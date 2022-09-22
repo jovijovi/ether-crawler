@@ -372,9 +372,9 @@
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
 "@humanwhocodes/config-array@^0.10.4":
-  version "0.10.4"
-  resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.10.4.tgz#01e7366e57d2ad104feea63e72248f22015c520c"
-  integrity sha512-mXAIHxZT3Vcpg83opl1wGlVZ9xydbfZO3r5YfRSH6Gpp2J/PfdBP0wbDa2sO6/qRbcalpoevVyW6A/fI6LfeMw==
+  version "0.10.5"
+  resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.10.5.tgz#bb679745224745fff1e9a41961c1d45a49f81c04"
+  integrity sha512-XVVDtp+dVvRxMoxSiSfasYaG02VEe1qH5cKgMQJWhol6HwzbcqoCMJi8dAGoYAO57jhUyhI6cWuRiTcRaDaYug==
   dependencies:
     "@humanwhocodes/object-schema" "^1.2.1"
     debug "^4.1.1"
@@ -394,6 +394,16 @@
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
+
+"@jovijovi/ether-core-api@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@jovijovi/ether-core-api/-/ether-core-api-0.1.0.tgz#300011168ea016bf3be8f9e7de5217b93c4b4be8"
+  integrity sha512-1mXwn0D4HxlZbxnLDlShK4i8gx2EaHlqa1kyv9HrfIbpf+mUIyOYKHj9C3fPX+cGCCqGAY1bIJUQhEOnBBURIA==
+  dependencies:
+    "@jovijovi/ether-core" "^0.5.2"
+    "@jovijovi/pedrojs-common" "1.1.15"
+    "@jovijovi/pedrojs-network-http" "1.1.19"
+    lru-cache "7.14.0"
 
 "@jovijovi/ether-core@^0.5.2":
   version "0.5.2"
@@ -440,14 +450,14 @@
     "@jovijovi/pedrojs-version" "^1.0.12"
     log4js "6.6.1"
 
-"@jovijovi/pedrojs-mysql@1.1.18":
-  version "1.1.18"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-mysql/-/pedrojs-mysql-1.1.18.tgz#9b33b7110b8353d200aa3668fde578e936a62179"
-  integrity sha512-51qtVDyjiD8pn4H4ABNdHfk6V8o0uxeIfGiapS0DBV9PsipqgGKIGp0TMK6WdGsVo8xXEobsjZJkoYKutNm+kw==
+"@jovijovi/pedrojs-mysql@1.1.20":
+  version "1.1.20"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-mysql/-/pedrojs-mysql-1.1.20.tgz#dbc7e974d1ee35bf7506b5f86a6fcc647bada4d9"
+  integrity sha512-H32Fr9BZ2h1hS70e2GrXhglVoI5mr2gZ4nhcCN4PT3TAygqEzBeFOjAp6dPz4/GxOyOVsdz4LfPNROpypr0RUA==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.12"
     mysql2 "^2.3.3"
-    sequelize "^6.21.6"
+    sequelize "^6.23.0"
 
 "@jovijovi/pedrojs-network-http@1.1.19":
   version "1.1.19"
@@ -462,23 +472,23 @@
     express "4.18.1"
     nanoid "3.3.4"
 
-"@jovijovi/pedrojs-pg@1.1.18":
-  version "1.1.18"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-pg/-/pedrojs-pg-1.1.18.tgz#38c5625c8dcafce1935f48b08e6333199af29dc6"
-  integrity sha512-0Y8lXx61ffJ1iyaLCZUOzZ0SXOzsz/FN2f8aBNlz8Q23I44juGAT4TqBtLftcBe2GrJtjgZa+4o1VOn6WKAeYQ==
+"@jovijovi/pedrojs-pg@1.1.20":
+  version "1.1.20"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-pg/-/pedrojs-pg-1.1.20.tgz#6a088c0797e85d17a6ebd78356a47929b2d33149"
+  integrity sha512-fp+PcUzAKKTpLoRmg6VnbZZGxybGfG6KH93+G2OUY2zrLJNSAs3lA3oi3x26Qp5GxdUG4fo9hcE+FIpuuzy29Q==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.12"
     pg "^8.7.3"
     pg-hstore "^2.3.4"
-    sequelize "^6.21.6"
+    sequelize "^6.23.0"
 
-"@jovijovi/pedrojs-sqlite@1.1.18":
-  version "1.1.18"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-sqlite/-/pedrojs-sqlite-1.1.18.tgz#72b005c0992d75fa25ce3ec85f061d7d4caed7fe"
-  integrity sha512-PZx2H7AsPFRKtQY3yXwCW1aD6UeZrwvVBReJdbpsqHA78JgGlXUZ+EwrK00r8FQMTUIFvPPyakRxsVEV9GnLwg==
+"@jovijovi/pedrojs-sqlite@1.1.20":
+  version "1.1.20"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-sqlite/-/pedrojs-sqlite-1.1.20.tgz#5ae103b7ebefad2cb4f0440018c34268f16ab3a3"
+  integrity sha512-m9odu8ddn6px1FzFnDBvGBSHeDwu0n0iCSskXFwELB3JDTEL5uLr3RU0xEX9FX/BEsDMkmUW9cr5X//vQjaZwg==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.12"
-    sequelize "^6.21.6"
+    sequelize "^6.23.0"
     sqlite3 "5.0.11"
 
 "@jovijovi/pedrojs-tracing@1.1.18":
@@ -4540,7 +4550,7 @@ sequelize-pool@^7.1.0:
   resolved "https://registry.yarnpkg.com/sequelize-pool/-/sequelize-pool-7.1.0.tgz#210b391af4002762f823188fd6ecfc7413020768"
   integrity sha512-G9c0qlIWQSK29pR/5U2JF5dDQeqqHRragoyahj/Nx4KOOQ3CPPfzxnfqFPCSB7x5UgjOgnZ61nSxz+fjDpRlJg==
 
-sequelize@^6.21.6:
+sequelize@^6.23.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-6.23.0.tgz#53b5f6052c6a86fbdd5a5610c33895b853b3b5d5"
   integrity sha512-3tDzy43ip41cQ3oKkvv8ZxoDm1ecCVLrLhcq6J/CBuflUdTe4Xmt6NqA1ZrzzdSDhqVlWn8SxkNIxXSjOn6qLQ==
