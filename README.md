@@ -20,7 +20,6 @@ A transaction crawler for the Ethereum ecosystem.
 - ts-node `v10.9.1`
 - yarn `v1.22.19`
 
-
 ## Quick Guide
 
 - Install dependency
@@ -36,6 +35,22 @@ A transaction crawler for the Ethereum ecosystem.
   ```shell
   make build
   ```
+
+- DEV environment dependency
+
+  - Setup
+
+    ```shell
+    cd ./devenv
+    ./dev.sh up
+    cd ..
+    ```
+
+  - Shutdown
+
+    ```shell
+    ./dev.sh down
+    ```
 
 - Build docker image
 
@@ -75,6 +90,7 @@ A transaction crawler for the Ethereum ecosystem.
 
 - Support more transaction type
 - Improve performance
+- UT
 
 ## License
 
