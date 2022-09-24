@@ -65,15 +65,15 @@ export function Run() {
 		dumpJob.push(txQueue).catch((err) => log.RequestId().error(err));
 	}, DefaultLoopInterval);
 
-	// Push fetch events job
-	for (const txType of conf.txType) {
-		PushJob({
-			txType: [txType],
-			fromBlock: conf.fromBlock,
-			maxBlockRange: conf.maxBlockRange,
-			pushJobIntervals: conf.pushJobIntervals,
-		});
-	}
+	// Push PullBlock job
+	PushJob({
+		txType: conf.txType,
+		fromBlock: conf.fromBlock,
+		toBlock: conf.toBlock,
+		maxBlockRange: conf.maxBlockRange,
+		pushJobIntervals: conf.pushJobIntervals,
+		keepRunning: conf.keepRunning,
+	});
 
 	return;
 }
@@ -249,7 +249,8 @@ export function PushJob(opts: Options) {
 		txType: opts.txType,
 		fromBlock: opts.fromBlock,
 		toBlock: opts.toBlock,
-		maxBlockRange: opts.maxBlockRange,
+		maxBlockRange: opts.maxBlockRange ? opts.maxBlockRange : customConfig.GetCrawler().maxBlockRange,
 		pushJobIntervals: opts.pushJobIntervals ? opts.pushJobIntervals : customConfig.GetCrawler().pushJobIntervals,
+		keepRunning: opts.keepRunning,
 	}).catch((err) => log.RequestId().error(err));
 }

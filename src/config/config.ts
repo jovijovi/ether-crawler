@@ -14,9 +14,11 @@ export namespace customConfig {
 		txType: string[]
 		callback: string
 		fromBlock: number
+		toBlock: number
 		maxBlockRange?: number
 		pushJobIntervals?: number
 		executeJobConcurrency?: number
+		keepRunning?: boolean
 		db: string
 	}
 
