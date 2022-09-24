@@ -42,6 +42,10 @@ export const ModelAttrs = {
 		type: DataTypes.DECIMAL,
 		allowNull: true,
 	},
+	ether_value: {
+		type: DataTypes.TEXT,
+		allowNull: true,
+	},
 	nonce: {
 		type: DataTypes.BIGINT,
 		allowNull: false,

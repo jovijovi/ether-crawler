@@ -1,3 +1,4 @@
+import {utils} from 'ethers';
 import {ModelCtor} from 'sequelize';
 import {log, util} from '@jovijovi/pedrojs-common';
 import {CompactTx} from '../types';
@@ -12,7 +13,7 @@ interface IDatabase {
 export class Database implements IDatabase {
 	public ModelTx: ModelCtor<ICompactTx>;
 
-	// Save event to database
+	// Save tx to database
 	async Save(tx: CompactTx): Promise<any> {
 		try {
 			return await this.ModelTx.upsert({
@@ -24,6 +25,7 @@ export class Database implements IDatabase {
 				from: tx.from,
 				to: tx.to,
 				value: tx.value,
+				ether_value: utils.formatEther(tx.value),
 				nonce: tx.nonce,
 				status: tx.status,
 				gas_limit: tx.gasLimit,
