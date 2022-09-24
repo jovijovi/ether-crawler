@@ -83,7 +83,8 @@ async function queryTx(opts: Options = {
 	txType: [TxTypeTransfer],
 	fromBlock: DefaultFromBlock
 }): Promise<void> {
-	log.RequestId().info("EXEC JOB, QueryTx(blocks[%d,%d]) running... QueryTxJobsCount=%d", opts.fromBlock, opts.toBlock, queryTxJobs.length());
+	log.RequestId().trace("EXEC JOB(%s), QueryTx(blocks[%d,%d]) running... QueryTxJobsCount=%d",
+		opts.txType, opts.fromBlock, opts.toBlock, queryTxJobs.length());
 
 	const provider = network.MyProvider.Get();
 
@@ -132,7 +133,7 @@ async function queryTx(opts: Options = {
 		}
 	}
 
-	log.RequestId().info("JOB FINISHED, QueryTx(blocks[%d,%d]), QueryTxJobsCount=%d",
+	log.RequestId().trace("JOB FINISHED, QueryTx(blocks[%d,%d]), QueryTxJobsCount=%d",
 		opts.fromBlock, opts.toBlock, queryTxJobs.length());
 
 	return;
