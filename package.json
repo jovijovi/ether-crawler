@@ -1,6 +1,6 @@
 {
   "name": "ether-crawler",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A transaction crawler the Ethereum ecosystem.",
   "author": "jovijovi <mageyul@hotmail.com>",
   "license": "MIT",
@@ -31,9 +31,7 @@
     "@jovijovi/pedrojs-sqlite": "1.1.20",
     "ethers": "5.7.1",
     "fastq": "^1.13.0",
-    "got": "11.8.5",
-    "lru-cache": "7.14.0",
-    "write-file-atomic": "^4.0.2"
+    "got": "11.8.5"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "2.1.1",
@@ -45,12 +43,12 @@
     "@types/chai": "4.3.3",
     "@types/chai-as-promised": "7.1.5",
     "@types/mocha": "9.1.1",
-    "@types/node": "18.7.18",
+    "@types/node": "18.7.21",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "chai": "4.3.6",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^8.23.1",
+    "eslint": "^8.24.0",
     "hardhat": "2.11.2",
     "mocha": "^10.0.0",
     "ts-generator": "^0.1.1",
