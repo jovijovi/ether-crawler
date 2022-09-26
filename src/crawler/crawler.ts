@@ -58,7 +58,7 @@ export function Run() {
 	// Schedule processing job
 	setInterval(() => {
 		auditor.Check(txQueue, "Tx queue is nil");
-		if (txQueue.Length() == 0) {
+		if (txQueue.Length() === 0) {
 			return;
 		}
 
@@ -96,7 +96,7 @@ async function queryTx(opts: Options = {
 		}, DefaultRetryTimes, DefaultRetryInterval, false);
 
 		// Skip empty block (no tx)
-		if (block.transactions.length == 0) {
+		if (block.transactions.length === 0) {
 			continue;
 		}
 
