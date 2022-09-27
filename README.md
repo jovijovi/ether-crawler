@@ -7,6 +7,7 @@ Transactions crawler for the Ethereum ecosystem.
 ## Features
 
 - Dump `transfer coin` transaction to database
+- Support [PostgreSQL](https://www.postgresql.org), [MySQL](https://www.mysql.com) and [SQLite](https://www.sqlite.org) 
 
 ## Supported Chains
 
