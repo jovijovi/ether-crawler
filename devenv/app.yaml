@@ -1,12 +1,19 @@
 version: '3.1'
 
 services:
-  pedrojs:
+  ether-crawler:
     container_name: devenv_ether_crawler
     image: ether-crawler:latest
     restart: always
     volumes:
       - ../conf:/opt/app/conf
       - ../database:/opt/app/database
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          memory: 256M
     ports:
       - "57550:57550"
