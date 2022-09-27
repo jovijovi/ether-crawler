@@ -11,7 +11,6 @@ import {
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
 	DefaultQueryIntervals,
-	DefaultRetryInterval,
 	DefaultRetryTimes,
 } from './params';
 import {TxTypeTransfer} from './constants';
@@ -20,7 +19,7 @@ import {Options} from './options';
 import {customConfig} from '../config';
 import {DB} from './db';
 import {CheckTxType} from './utils';
-import {GetBlockNumber} from './common';
+import {GetBlockNumber, RandomRetryInterval} from './common';
 
 // Compact tx queue (ASC, FIFO)
 const txQueue = new util.Queue<CompactTx>();
@@ -93,7 +92,7 @@ async function queryTx(opts: Options = {
 		// Get block with transactions
 		const block = await util.retry.Run(async (): Promise<BlockWithTransactions> => {
 			return provider.getBlockWithTransactions(blockNumber);
-		}, DefaultRetryTimes, DefaultRetryInterval, false);
+		}, DefaultRetryTimes, RandomRetryInterval(), false);
 
 		// Skip empty block (no tx)
 		if (block.transactions.length === 0) {
@@ -110,7 +109,7 @@ async function queryTx(opts: Options = {
 			// Try to tx receipt
 			const receipt = await util.retry.Run(async (): Promise<TransactionReceipt> => {
 				return provider.getTransactionReceipt(tx.hash);
-			}, DefaultRetryTimes, DefaultRetryInterval, false);
+			}, DefaultRetryTimes, RandomRetryInterval(), false);
 
 			// Build compact tx
 			const compactTx: CompactTx = {
