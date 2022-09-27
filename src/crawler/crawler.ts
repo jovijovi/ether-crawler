@@ -69,8 +69,8 @@ export function Run() {
 		txType: conf.txType,
 		fromBlock: conf.fromBlock,
 		toBlock: conf.toBlock,
-		maxBlockRange: conf.maxBlockRange,
-		pushJobIntervals: conf.pushJobIntervals,
+		maxBlockRange: conf.maxBlockRange ? conf.maxBlockRange : DefaultMaxBlockRange,
+		pushJobIntervals: conf.pushJobIntervals ? conf.pushJobIntervals : DefaultPushJobIntervals,
 		keepRunning: conf.keepRunning,
 	});
 
