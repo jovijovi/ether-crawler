@@ -38,6 +38,19 @@ export class Database implements IDatabase {
 
 		return;
 	}
+
+	// Check if tx is exists
+	async IsTxExists(txHash: string): Promise<boolean> {
+		try {
+			return await this.ModelTx.count({
+				where: {
+					transaction_hash: txHash
+				},
+			}) > 0;
+		} catch (e) {
+			log.RequestId().error('IsExist failed, error=', e.message);
+		}
+	}
 }
 
 

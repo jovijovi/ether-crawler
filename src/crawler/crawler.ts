@@ -232,6 +232,7 @@ async function callback(tx: CompactTx): Promise<void> {
 // Dump tx
 async function dump(queue: util.Queue<CompactTx>): Promise<void> {
 	try {
+		const conf = customConfig.GetCrawler();
 		const len = queue.Length();
 		if (len === 0) {
 			return;
@@ -244,6 +245,11 @@ async function dump(queue: util.Queue<CompactTx>): Promise<void> {
 			await callback(tx);
 
 			// Dump tx to database
+			if (!conf.forceUpdate && await DB.Client().IsTxExists(tx.txHash)) {
+				log.RequestId().debug("Tx(%s) in block(%d) already exists, skipped", tx.txHash, tx.blockNumber);
+				return;
+			}
+
 			log.RequestId().info("Try to dump tx to database, count=%d, tx=%o", i + 1, tx);
 			await DB.Client().Save(tx);
 		}

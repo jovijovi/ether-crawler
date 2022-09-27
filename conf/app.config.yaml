@@ -93,6 +93,9 @@ custom:
     # Keep running crawler
     keepRunning: false
 
+    # Force update database if the data already exists
+    forceUpdate: true
+
     # Supported Database: postgres, mysql or sqlite
     db: postgres
 
