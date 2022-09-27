@@ -1,17 +1,27 @@
 # Changelog
 
-## [v0.1.2](https://github.com/jovijovi/ether-crawler/releases/tag/v0.1.2)
+## [v0.2.0](https://github.com/jovijovi/ether-crawler/releases/tag/v0.2.0)
 
 Features:
 
-- (crawler)
-  - Add 'toBlock' and 'keepRunning' to config
-  - Save ether_value to database
+- Add 'toBlock' and 'keepRunning' to config
+- Save ether_value to database
+- Random retry interval
+- Load default values if not configured
+- Force update database if the data already exists
 
 Refactor:
+
+- Init crawler with config
 - Remove useless code
 
+Fixes:
+
+- (crawler/db): 'value' out of range error for MySQL
+- (crawler): use strict equality operators
+
 Build:
+
 - Bump packages
 
 ## [v0.1.1](https://github.com/jovijovi/ether-crawler/releases/tag/v0.1.1)
