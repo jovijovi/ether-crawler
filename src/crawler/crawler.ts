@@ -34,25 +34,11 @@ let queryTxJobs: queueAsPromised<Options>;
 const dumpJob: queueAsPromised<util.Queue<CompactTx>> = fastq.promise(dump, 1);
 
 // Run crawler
-export function Run() {
-	// Check config
-	const conf = customConfig.GetCrawler();
-	if (!conf) {
-		log.RequestId().info('No crawler configuration, skipped.');
-		return;
-	} else if (!conf.enable) {
-		log.RequestId().info('Crawler disabled.');
+export async function Run() {
+	const [conf, ok] = await init();
+	if (!ok) {
 		return;
 	}
-
-	log.RequestId().info("Crawler config=", conf);
-
-	auditor.Check(conf.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
-	auditor.Check(conf.fromBlock >= 0, "Invalid fromBlock");
-
-	queryTxJobs = fastq.promise(queryTx, conf.executeJobConcurrency ? conf.executeJobConcurrency : DefaultExecuteJobConcurrency);
-
-	log.RequestId().info("Crawler is running...");
 
 	// Schedule processing job
 	setInterval(() => {
@@ -74,7 +60,36 @@ export function Run() {
 		keepRunning: conf.keepRunning,
 	});
 
+	log.RequestId().info("Crawler is running...");
+
 	return;
+}
+
+// Init crawler
+async function init(): Promise<[customConfig.CrawlerConfig, boolean]> {
+	// Load config
+	const conf = customConfig.GetCrawler();
+	if (!conf) {
+		log.RequestId().info('No crawler configuration, skipped.');
+		return [undefined, false];
+	} else if (!conf.enable) {
+		log.RequestId().info('Crawler disabled.');
+		return [undefined, false];
+	}
+
+	log.RequestId().info("Crawler config=", conf);
+
+	// Check params
+	auditor.Check(conf.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
+	auditor.Check(conf.fromBlock >= 0, "Invalid fromBlock");
+
+	// Connect to database
+	await DB.Connect();
+
+	// Build query tx job
+	queryTxJobs = fastq.promise(queryTx, conf.executeJobConcurrency ? conf.executeJobConcurrency : DefaultExecuteJobConcurrency);
+
+	return [conf, true];
 }
 
 // Execute query transactions job
@@ -153,9 +168,6 @@ async function pullBlocks(opts: Options = {
 	let blockNumber = opts.toBlock ? opts.toBlock : await GetBlockNumber();
 
 	auditor.Check(blockNumber >= nextFrom, "Invalid fromBlock/toBlock");
-
-	// Connect to database
-	await DB.Connect();
 
 	do {
 		leftBlocks = blockNumber - nextFrom;

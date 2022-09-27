@@ -9,7 +9,7 @@ export namespace customConfig {
 		confirmations: number
 	}
 
-	class Crawler {
+	export class CrawlerConfig {
 		enable: boolean
 		txType: string[]
 		callback: string
@@ -34,7 +34,7 @@ export namespace customConfig {
 		table: string
 	}
 
-	class Database {
+	class DatabaseConfig {
 		postgres: PostgresqlConfig
 		mysql: MysqlConfig
 		sqlite: SqliteConfig
@@ -43,8 +43,8 @@ export namespace customConfig {
 	export class CustomConfig {
 		apiResponseCode: any
 		tx: TxConfig
-		crawler: Crawler
-		database?: Database
+		crawler: CrawlerConfig
+		database?: DatabaseConfig
 	}
 
 	let customConfig: CustomConfig;
@@ -63,7 +63,7 @@ export namespace customConfig {
 	}
 
 	// GetCrawler returns crawler config
-	export function GetCrawler(): Crawler {
+	export function GetCrawler(): CrawlerConfig {
 		if (customConfig.crawler) {
 			return customConfig.crawler;
 		}
