@@ -22,10 +22,10 @@ function printHelp() {
 
 if [[ "${MODE}" == "up" ]]; then
   echo "## Starting app..."
-  docker-compose -f app.yaml up -d
+  docker-compose --compatibility -f app.yaml up -d
 elif [[ "${MODE}" == "down" ]]; then
   echo "## Stopping app..."
-  docker-compose -f app.yaml down
+  docker-compose --compatibility -f app.yaml down
 else
   printHelp
   exit 1

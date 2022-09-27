@@ -2,11 +2,12 @@
 
 [![GitHub Actions](https://github.com/jovijovi/ether-crawler/workflows/Test/badge.svg)](https://github.com/jovijovi/ether-crawler)
 
-A transaction crawler for the Ethereum ecosystem.
+Transactions crawler for the Ethereum ecosystem.
 
 ## Features
 
-- Dump `transfer` transaction to database
+- Dump `transfer coin` transaction to database
+- Support [PostgreSQL](https://www.postgresql.org), [MySQL](https://www.mysql.com) and [SQLite](https://www.sqlite.org) 
 
 ## Supported Chains
 
@@ -16,10 +17,9 @@ A transaction crawler for the Ethereum ecosystem.
 ## Development Environment
 
 - typescript `4.8.3`
-- node `v16.17.0`
+- node `v16.17.1`
 - ts-node `v10.9.1`
 - yarn `v1.22.19`
-
 
 ## Quick Guide
 
@@ -36,6 +36,22 @@ A transaction crawler for the Ethereum ecosystem.
   ```shell
   make build
   ```
+
+- DEV environment dependency
+
+  - Setup
+
+    ```shell
+    cd ./devenv
+    ./dev.sh up
+    cd ..
+    ```
+
+  - Shutdown
+
+    ```shell
+    ./dev.sh down
+    ```
 
 - Build docker image
 
@@ -75,6 +91,8 @@ A transaction crawler for the Ethereum ecosystem.
 
 - Support more transaction type
 - Improve performance
+- UT
+- Resume job from interruption
 
 ## License
 

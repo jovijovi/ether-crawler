@@ -78,6 +78,9 @@ custom:
     # Pull from block number (history or future block)
     fromBlock: 0
 
+    # Pull to block number (history or future block, options)
+    toBlock:
+
     # Get blocks range
     maxBlockRange: 50
 
@@ -86,6 +89,12 @@ custom:
 
     # Execute job concurrency
     executeJobConcurrency: 10
+
+    # Keep running crawler
+    keepRunning: false
+
+    # Force update database if the data already exists
+    forceUpdate: true
 
     # Supported Database: postgres, mysql or sqlite
     db: postgres

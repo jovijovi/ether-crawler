@@ -11,7 +11,6 @@ import {
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
 	DefaultQueryIntervals,
-	DefaultRetryInterval,
 	DefaultRetryTimes,
 } from './params';
 import {TxTypeTransfer} from './constants';
@@ -20,7 +19,7 @@ import {Options} from './options';
 import {customConfig} from '../config';
 import {DB} from './db';
 import {CheckTxType} from './utils';
-import {GetBlockNumber} from './common';
+import {GetBlockNumber, RandomRetryInterval} from './common';
 
 // Compact tx queue (ASC, FIFO)
 const txQueue = new util.Queue<CompactTx>();
@@ -35,47 +34,62 @@ let queryTxJobs: queueAsPromised<Options>;
 const dumpJob: queueAsPromised<util.Queue<CompactTx>> = fastq.promise(dump, 1);
 
 // Run crawler
-export function Run() {
-	// Check config
-	const conf = customConfig.GetCrawler();
-	if (!conf) {
-		log.RequestId().info('No crawler configuration, skipped.');
-		return;
-	} else if (!conf.enable) {
-		log.RequestId().info('Crawler disabled.');
+export async function Run() {
+	const [conf, ok] = await init();
+	if (!ok) {
 		return;
 	}
-
-	log.RequestId().info("Crawler config=", conf);
-
-	auditor.Check(conf.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
-	auditor.Check(conf.fromBlock >= 0, "Invalid fromBlock");
-
-	queryTxJobs = fastq.promise(queryTx, conf.executeJobConcurrency ? conf.executeJobConcurrency : DefaultExecuteJobConcurrency);
-
-	log.RequestId().info("Crawler is running...");
 
 	// Schedule processing job
 	setInterval(() => {
 		auditor.Check(txQueue, "Tx queue is nil");
-		if (txQueue.Length() == 0) {
+		if (txQueue.Length() === 0) {
 			return;
 		}
 
 		dumpJob.push(txQueue).catch((err) => log.RequestId().error(err));
 	}, DefaultLoopInterval);
 
-	// Push fetch events job
-	for (const txType of conf.txType) {
-		PushJob({
-			txType: [txType],
-			fromBlock: conf.fromBlock,
-			maxBlockRange: conf.maxBlockRange,
-			pushJobIntervals: conf.pushJobIntervals,
-		});
-	}
+	// Push PullBlock job
+	PushJob({
+		txType: conf.txType,
+		fromBlock: conf.fromBlock,
+		toBlock: conf.toBlock,
+		maxBlockRange: conf.maxBlockRange ? conf.maxBlockRange : DefaultMaxBlockRange,
+		pushJobIntervals: conf.pushJobIntervals ? conf.pushJobIntervals : DefaultPushJobIntervals,
+		keepRunning: conf.keepRunning,
+	});
+
+	log.RequestId().info("Crawler is running...");
 
 	return;
+}
+
+// Init crawler
+async function init(): Promise<[customConfig.CrawlerConfig, boolean]> {
+	// Load config
+	const conf = customConfig.GetCrawler();
+	if (!conf) {
+		log.RequestId().info('No crawler configuration, skipped.');
+		return [undefined, false];
+	} else if (!conf.enable) {
+		log.RequestId().info('Crawler disabled.');
+		return [undefined, false];
+	}
+
+	log.RequestId().info("Crawler config=", conf);
+
+	// Check params
+	auditor.Check(conf.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
+	auditor.Check(conf.fromBlock >= 0, "Invalid fromBlock");
+
+	// Connect to database
+	await DB.Connect();
+
+	// Build query tx job
+	queryTxJobs = fastq.promise(queryTx, conf.executeJobConcurrency ? conf.executeJobConcurrency : DefaultExecuteJobConcurrency);
+
+	return [conf, true];
 }
 
 // Execute query transactions job
@@ -83,7 +97,8 @@ async function queryTx(opts: Options = {
 	txType: [TxTypeTransfer],
 	fromBlock: DefaultFromBlock
 }): Promise<void> {
-	log.RequestId().info("EXEC JOB, QueryTx(blocks[%d,%d]) running... QueryTxJobsCount=%d", opts.fromBlock, opts.toBlock, queryTxJobs.length());
+	log.RequestId().trace("EXEC JOB(%s), QueryTx(blocks[%d,%d]) running... QueryTxJobsCount=%d",
+		opts.txType, opts.fromBlock, opts.toBlock, queryTxJobs.length());
 
 	const provider = network.MyProvider.Get();
 
@@ -92,10 +107,10 @@ async function queryTx(opts: Options = {
 		// Get block with transactions
 		const block = await util.retry.Run(async (): Promise<BlockWithTransactions> => {
 			return provider.getBlockWithTransactions(blockNumber);
-		}, DefaultRetryTimes, DefaultRetryInterval, false);
+		}, DefaultRetryTimes, RandomRetryInterval(), false);
 
 		// Skip empty block (no tx)
-		if (block.transactions.length == 0) {
+		if (block.transactions.length === 0) {
 			continue;
 		}
 
@@ -109,7 +124,7 @@ async function queryTx(opts: Options = {
 			// Try to tx receipt
 			const receipt = await util.retry.Run(async (): Promise<TransactionReceipt> => {
 				return provider.getTransactionReceipt(tx.hash);
-			}, DefaultRetryTimes, DefaultRetryInterval, false);
+			}, DefaultRetryTimes, RandomRetryInterval(), false);
 
 			// Build compact tx
 			const compactTx: CompactTx = {
@@ -132,7 +147,7 @@ async function queryTx(opts: Options = {
 		}
 	}
 
-	log.RequestId().info("JOB FINISHED, QueryTx(blocks[%d,%d]), QueryTxJobsCount=%d",
+	log.RequestId().trace("JOB FINISHED, QueryTx(blocks[%d,%d]), QueryTxJobsCount=%d",
 		opts.fromBlock, opts.toBlock, queryTxJobs.length());
 
 	return;
@@ -153,9 +168,6 @@ async function pullBlocks(opts: Options = {
 	let blockNumber = opts.toBlock ? opts.toBlock : await GetBlockNumber();
 
 	auditor.Check(blockNumber >= nextFrom, "Invalid fromBlock/toBlock");
-
-	// Connect to database
-	await DB.Connect();
 
 	do {
 		leftBlocks = blockNumber - nextFrom;
@@ -220,6 +232,7 @@ async function callback(tx: CompactTx): Promise<void> {
 // Dump tx
 async function dump(queue: util.Queue<CompactTx>): Promise<void> {
 	try {
+		const conf = customConfig.GetCrawler();
 		const len = queue.Length();
 		if (len === 0) {
 			return;
@@ -232,6 +245,11 @@ async function dump(queue: util.Queue<CompactTx>): Promise<void> {
 			await callback(tx);
 
 			// Dump tx to database
+			if (!conf.forceUpdate && await DB.Client().IsTxExists(tx.txHash)) {
+				log.RequestId().debug("Tx(%s) in block(%d) already exists, skipped", tx.txHash, tx.blockNumber);
+				return;
+			}
+
 			log.RequestId().info("Try to dump tx to database, count=%d, tx=%o", i + 1, tx);
 			await DB.Client().Save(tx);
 		}
@@ -249,7 +267,8 @@ export function PushJob(opts: Options) {
 		txType: opts.txType,
 		fromBlock: opts.fromBlock,
 		toBlock: opts.toBlock,
-		maxBlockRange: opts.maxBlockRange,
+		maxBlockRange: opts.maxBlockRange ? opts.maxBlockRange : customConfig.GetCrawler().maxBlockRange,
 		pushJobIntervals: opts.pushJobIntervals ? opts.pushJobIntervals : customConfig.GetCrawler().pushJobIntervals,
+		keepRunning: opts.keepRunning,
 	}).catch((err) => log.RequestId().error(err));
 }

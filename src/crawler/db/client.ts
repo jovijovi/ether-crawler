@@ -1,14 +1,9 @@
 import {customConfig} from '../../config';
 import {auditor} from '@jovijovi/pedrojs-common';
+import {DatabaseType} from './constants';
 import {PostgresClient, PostgresDB} from './postgres';
 import {MysqlClient, MysqlDB} from './mysql';
 import {SqliteClient, SqliteDB} from './sqlite3';
-
-const enum DatabaseType {
-	Postgres = 'postgres',
-	Mysql = 'mysql',
-	Sqlite = 'sqlite',
-}
 
 class DBClient {
 	private _client: PostgresDB | MysqlDB | SqliteDB;

@@ -20,7 +20,10 @@ function main() {
 		}
 	});
 
-	crawler.Run();
+	crawler.Run().catch((err) => {
+		log.RequestId().fatal(err);
+		sys.Shutdown();
+	});
 }
 
 main();

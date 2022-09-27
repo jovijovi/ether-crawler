@@ -1,7 +1,8 @@
 import {Sqlite} from '@jovijovi/pedrojs-sqlite';
 import {customConfig} from '../../config';
-import {ICompactTx, ModelAttrs, ModelName, TableName} from './model';
+import {ICompactTx, ModelAttrsMapper, ModelName, TableName} from './model';
 import {Database} from './interface';
+import {DatabaseType} from './constants';
 
 export class SqliteDB extends Database {
 	async Connect(): Promise<Sqlite.Engine> {
@@ -20,7 +21,7 @@ export class SqliteDB extends Database {
 		};
 
 		// Define model
-		this.ModelTx = engine.client.define<ICompactTx>(ModelName, ModelAttrs, opts);
+		this.ModelTx = engine.client.define<ICompactTx>(ModelName, ModelAttrsMapper.get(DatabaseType.Sqlite), opts);
 
 		// Creates the table if it doesn't exist (and does nothing if it already exists)
 		await this.ModelTx.sync();
