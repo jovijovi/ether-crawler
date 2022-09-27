@@ -92,6 +92,7 @@ Transactions crawler for the Ethereum ecosystem.
 - Support more transaction type
 - Improve performance
 - UT
+- Resume job from interruption
 
 ## License
 
