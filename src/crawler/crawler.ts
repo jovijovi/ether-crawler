@@ -147,8 +147,8 @@ async function queryTx(opts: Options = {
 		}
 	}
 
-	log.RequestId().trace("JOB FINISHED, QueryTx(blocks[%d,%d]), QueryTxJobsCount=%d",
-		opts.fromBlock, opts.toBlock, queryTxJobs.length());
+	log.RequestId().trace("JOB(%s) FINISHED, QueryTx(blocks[%d,%d]), QueryTxJobsCount=%d",
+		opts.txType, opts.fromBlock, opts.toBlock, queryTxJobs.length());
 
 	return;
 }
@@ -250,7 +250,7 @@ async function dump(queue: util.Queue<CompactTx>): Promise<void> {
 				return;
 			}
 
-			log.RequestId().info("Try to dump tx to database, count=%d, tx=%o", i + 1, tx);
+			log.RequestId().info("Dumping tx to db, count=%d, tx=%o", i + 1, tx);
 			await DB.Client().Save(tx);
 		}
 	} catch (e) {
