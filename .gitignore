@@ -21,6 +21,7 @@
 /*.tar.gz
 /_dev
 /_release
+/_backup
 .deps
 artifacts
 
