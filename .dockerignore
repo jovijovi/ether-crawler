@@ -6,10 +6,18 @@
 /.idea
 /.vscode
 
+# git
+/.git
+
+# ci
+/.github
+
 # builders
 /*.tar
 /*.tar.gz
 /_dev
+/_release
+/_backup
 
 # db
 /database
