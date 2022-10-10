@@ -32,7 +32,8 @@
     "@jovijovi/pedrojs-sqlite": "1.1.22",
     "ethers": "5.7.1",
     "fastq": "^1.13.0",
-    "got": "11.8.5"
+    "got": "11.8.5",
+    "progress": "^2.0.3"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "2.1.1",

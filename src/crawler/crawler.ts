@@ -20,6 +20,7 @@ import {customConfig} from '../config';
 import {DB} from './db';
 import {CheckTxType} from './utils';
 import {GetBlockNumber, RandomRetryInterval} from './common';
+import {NewProgressBar, UpdateProgressBar} from './progress';
 
 // Compact tx queue (ASC, FIFO)
 const txQueue = new util.Queue<CompactTx>();
@@ -169,10 +170,17 @@ async function pullBlocks(opts: Options = {
 
 	auditor.Check(blockNumber >= nextFrom, "Invalid fromBlock/toBlock");
 
+	// Init progress bar
+	const totalProgress = blockNumber - nextFrom;
+	const progress = NewProgressBar(totalProgress);
+
 	do {
+		await util.time.SleepMilliseconds(opts.pushJobIntervals);
+
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
 			if (!opts.keepRunning) {
+				UpdateProgressBar(progress, totalProgress);
 				break;
 			}
 			await util.time.SleepSeconds(DefaultQueryIntervals);
@@ -194,9 +202,9 @@ async function pullBlocks(opts: Options = {
 			toBlock: nextTo,        // Fetch to block number
 		}).catch((err) => log.RequestId().error(err));
 
-		nextFrom = nextTo + 1;
+		UpdateProgressBar(progress, nextTo - nextFrom);
 
-		await util.time.SleepMilliseconds(opts.pushJobIntervals);
+		nextFrom = nextTo + 1;
 	} while (nextFrom > 0);
 
 	log.RequestId().info("PullBlocks finished, options=%o", opts);
