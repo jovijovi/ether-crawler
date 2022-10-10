@@ -8,6 +8,7 @@ Transactions crawler for the Ethereum ecosystem.
 
 - Dump `transfer coin` transaction to database
 - Support [PostgreSQL](https://www.postgresql.org), [MySQL](https://www.mysql.com) and [SQLite](https://www.sqlite.org) 
+- Custom crawler concurrency options
 
 ## Supported Chains
 
@@ -16,7 +17,7 @@ Transactions crawler for the Ethereum ecosystem.
 
 ## Development Environment
 
-- typescript `4.8.3`
+- typescript `4.8.4`
 - node `v16.17.1`
 - ts-node `v10.9.1`
 - yarn `v1.22.19`

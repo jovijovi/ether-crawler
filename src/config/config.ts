@@ -11,6 +11,7 @@ export namespace customConfig {
 
 	export class CrawlerConfig {
 		enable: boolean
+		progressBar: boolean
 		txType: string[]
 		callback: string
 		fromBlock: number

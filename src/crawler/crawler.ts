@@ -20,6 +20,7 @@ import {customConfig} from '../config';
 import {DB} from './db';
 import {CheckTxType} from './utils';
 import {GetBlockNumber, RandomRetryInterval} from './common';
+import {NewProgressBar, UpdateProgressBar} from './progress';
 
 // Compact tx queue (ASC, FIFO)
 const txQueue = new util.Queue<CompactTx>();
@@ -147,8 +148,8 @@ async function queryTx(opts: Options = {
 		}
 	}
 
-	log.RequestId().trace("JOB FINISHED, QueryTx(blocks[%d,%d]), QueryTxJobsCount=%d",
-		opts.fromBlock, opts.toBlock, queryTxJobs.length());
+	log.RequestId().trace("JOB(%s) FINISHED, QueryTx(blocks[%d,%d]), QueryTxJobsCount=%d",
+		opts.txType, opts.fromBlock, opts.toBlock, queryTxJobs.length());
 
 	return;
 }
@@ -169,10 +170,17 @@ async function pullBlocks(opts: Options = {
 
 	auditor.Check(blockNumber >= nextFrom, "Invalid fromBlock/toBlock");
 
+	// Init progress bar
+	const totalProgress = blockNumber - nextFrom;
+	const progress = NewProgressBar(totalProgress);
+
 	do {
+		await util.time.SleepMilliseconds(opts.pushJobIntervals);
+
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
 			if (!opts.keepRunning) {
+				UpdateProgressBar(progress, totalProgress);
 				break;
 			}
 			await util.time.SleepSeconds(DefaultQueryIntervals);
@@ -194,9 +202,9 @@ async function pullBlocks(opts: Options = {
 			toBlock: nextTo,        // Fetch to block number
 		}).catch((err) => log.RequestId().error(err));
 
-		nextFrom = nextTo + 1;
+		UpdateProgressBar(progress, nextTo - nextFrom);
 
-		await util.time.SleepMilliseconds(opts.pushJobIntervals);
+		nextFrom = nextTo + 1;
 	} while (nextFrom > 0);
 
 	log.RequestId().info("PullBlocks finished, options=%o", opts);
@@ -250,7 +258,7 @@ async function dump(queue: util.Queue<CompactTx>): Promise<void> {
 				return;
 			}
 
-			log.RequestId().info("Try to dump tx to database, count=%d, tx=%o", i + 1, tx);
+			log.RequestId().info("Dumping tx to db, count=%d, tx=%o", i + 1, tx);
 			await DB.Client().Save(tx);
 		}
 	} catch (e) {

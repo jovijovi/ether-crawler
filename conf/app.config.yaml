@@ -67,6 +67,9 @@ custom:
   crawler:
     enable: true
 
+    # Display progress bar
+    progressBar: false
+
     # Transaction type
     txType:
       # 'transfer' means transfer coin from an address to another address

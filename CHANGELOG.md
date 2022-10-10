@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.3.0](https://github.com/jovijovi/ether-crawler/releases/tag/v0.3.0)
+
+Features:
+
+- Load module by module loader
+- (crawler): progress bar
+
+Build:
+
+- Bump packages
+
 ## [v0.2.0](https://github.com/jovijovi/ether-crawler/releases/tag/v0.2.0)
 
 Features:
