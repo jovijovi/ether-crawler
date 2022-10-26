@@ -20,8 +20,8 @@ export namespace customConfig {
 		pushJobIntervals?: number
 		executeJobConcurrency?: number
 		keepRunning?: boolean
-		forceUpdate?: boolean
 		db: string
+		chunkSize: number
 	}
 
 	interface PostgresqlConfig extends Postgresql.Config {

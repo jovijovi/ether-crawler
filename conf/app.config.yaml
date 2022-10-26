@@ -81,7 +81,7 @@ custom:
     # Pull from block number (history or future block)
     fromBlock: 0
 
-    # Pull to block number (history or future block, options)
+    # Pull to block number (history or future block, optional)
     toBlock:
 
     # Get blocks range
@@ -101,6 +101,9 @@ custom:
 
     # Supported Database: postgres, mysql or sqlite
     db: postgres
+
+    # Chunk size for saving data to the database
+    chunkSize: 200
 
   networks:
     # Ethereum

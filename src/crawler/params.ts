@@ -27,3 +27,12 @@ export const DefaultRetryMaxInterval = DefaultRetryMinInterval * 3;
 
 // Keep running or not
 export const DefaultKeepRunning = false;
+
+// Default NanoID alphabet
+export const DefaultNanoIDAlphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+// Default job ID length
+export const DefaultJobIDLength = 8;
+
+// Default chunk length
+export const DefaultChunkSize = 200;

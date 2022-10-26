@@ -1,10 +1,11 @@
 import {BigNumber} from 'ethers';
 
-// Compact Transaction(Tx) Object
+// Compact Transaction Object (CompactTx)
 export type CompactTx = {
 	blockNumber: number     // Block number
 	blockHash: string       // Block hash
 	blockTimestamp: number  // Block timestamp
+	blockDatetime?: string  // Block datetime
 	txHash: string          // Tx hash
 	from: string            // From
 	to: string              // To

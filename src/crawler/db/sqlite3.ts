@@ -1,6 +1,6 @@
 import {Sqlite} from '@jovijovi/pedrojs-sqlite';
 import {customConfig} from '../../config';
-import {ICompactTx, ModelAttrsMapper, ModelName, TableName} from './model';
+import {DefaultIndexes, ICompactTx, ModelAttrsMapper, ModelName, TableName} from './model';
 import {Database} from './interface';
 import {DatabaseType} from './constants';
 
@@ -18,6 +18,7 @@ export class SqliteDB extends Database {
 		const opts = {
 			tableName: customConfig.GetSqliteConfig().table ? customConfig.GetSqliteConfig().table : TableName,
 			timestamps: false,
+			indexes: DefaultIndexes,
 		};
 
 		// Define model

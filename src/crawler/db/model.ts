@@ -139,4 +139,12 @@ export const ModelAttrsMapper: Map<string, any> = new Map([
 	[DatabaseType.Mysql, ModelAttrsMysql as any],
 ]);
 
+// Default indexes
+export const DefaultIndexes = [{
+	name: 'transactions_transaction_hash',
+	using: 'BTREE',
+	unique: true,
+	fields: ['transaction_hash'],
+}];
+
 export const TableName = 'transactions';
