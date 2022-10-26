@@ -1,7 +1,7 @@
 import {Sequelize} from 'sequelize';
 import {Mysql} from '@jovijovi/pedrojs-mysql';
 import {customConfig} from '../../config';
-import {ICompactTx, ModelAttrsMapper, ModelName, TableName} from './model';
+import {DefaultIndexes, ICompactTx, ModelAttrsMapper, ModelName, TableName} from './model';
 import {Database} from './interface';
 import {DatabaseType} from './constants';
 
@@ -26,6 +26,7 @@ export class MysqlDB extends Database {
 		const opts = {
 			tableName: customConfig.GetMysqlConfig().table ? customConfig.GetMysqlConfig().table : TableName,
 			timestamps: false,
+			indexes: DefaultIndexes,
 		};
 
 		// Define model

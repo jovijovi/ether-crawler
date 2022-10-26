@@ -1,7 +1,7 @@
 import {Sequelize} from 'sequelize';
 import {Postgresql} from '@jovijovi/pedrojs-pg';
 import {customConfig} from '../../config';
-import {ICompactTx, ModelAttrsMapper, ModelName, TableName} from './model';
+import {DefaultIndexes, ICompactTx, ModelAttrsMapper, ModelName, TableName} from './model';
 import {Database} from './interface';
 import {DatabaseType} from './constants';
 
@@ -26,6 +26,7 @@ export class PostgresDB extends Database {
 		const opts = {
 			tableName: customConfig.GetPostgresConfig().table ? customConfig.GetPostgresConfig().table : TableName,
 			timestamps: false,
+			indexes: DefaultIndexes,
 		};
 
 		// Define model
