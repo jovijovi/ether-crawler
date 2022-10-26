@@ -1,19 +1,40 @@
 # Changelog
 
+## [v0.4.0](https://github.com/jovijovi/ether-crawler/releases/tag/v0.4.0)
+
+### Features
+
+- (crawler/db):
+  - Add `BulkSave`
+  - Add default index
+
+### Performance
+
+- (crawler): improve dump events performance by `BulkSave`
+
+### Refactor
+
+- (crawler): refactor callback
+
+### Build
+
+- Bump node version from 16.17 to 16.18
+- Bump packages
+
 ## [v0.3.0](https://github.com/jovijovi/ether-crawler/releases/tag/v0.3.0)
 
-Features:
+### Features
 
 - Load module by module loader
 - (crawler): progress bar
 
-Build:
+### Build
 
 - Bump packages
 
 ## [v0.2.0](https://github.com/jovijovi/ether-crawler/releases/tag/v0.2.0)
 
-Features:
+### Features
 
 - Add 'toBlock' and 'keepRunning' to config
 - Save ether_value to database
@@ -21,28 +42,28 @@ Features:
 - Load default values if not configured
 - Force update database if the data already exists
 
-Refactor:
+### Refactor
 
 - Init crawler with config
 - Remove useless code
 
-Fixes:
+### Fixes
 
 - (crawler/db): 'value' out of range error for MySQL
 - (crawler): use strict equality operators
 
-Build:
+### Build
 
 - Bump packages
 
 ## [v0.1.1](https://github.com/jovijovi/ether-crawler/releases/tag/v0.1.1)
 
-Refactor:
+### Refactor
 
 - (handler): instead of 'eth' by @jovijovi/ether-core-api package
 
 ## [v0.1.0](https://github.com/jovijovi/ether-crawler/releases/tag/v0.1.0)
 
-Features:
+### Features
 
 - (crawler): dump `transfer` transaction to database
