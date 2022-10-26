@@ -1,38 +1,32 @@
 import {BlockWithTransactions, TransactionReceipt} from '@ethersproject/abstract-provider';
 import fastq, {queueAsPromised} from 'fastq';
-import got from 'got';
 import {auditor, log, util} from '@jovijovi/pedrojs-common';
 import {network} from '@jovijovi/ether-network';
 import {
 	DefaultExecuteJobConcurrency,
 	DefaultFromBlock,
 	DefaultKeepRunning,
-	DefaultLoopInterval,
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
 	DefaultQueryIntervals,
 	DefaultRetryTimes,
 } from './params';
 import {TxTypeTransfer} from './constants';
-import {CompactTx, Response} from './types';
+import {CompactTx} from './types';
 import {Options} from './options';
 import {customConfig} from '../config';
 import {DB} from './db';
-import {CheckTxType} from './utils';
+import {CheckTxType, NewJobID} from './utils';
 import {GetBlockNumber, RandomRetryInterval} from './common';
 import {NewProgressBar, UpdateProgressBar} from './progress';
-
-// Compact tx queue (ASC, FIFO)
-const txQueue = new util.Queue<CompactTx>();
+import * as callback from './callback';
+import * as dump from './dump';
 
 // Pull block jobs
 const pullBlockJobs: queueAsPromised<Options> = fastq.promise(pullBlocks, 1);
 
 // Query logs jobs
 let queryTxJobs: queueAsPromised<Options>;
-
-// Dump job
-const dumpJob: queueAsPromised<util.Queue<CompactTx>> = fastq.promise(dump, 1);
 
 // Run crawler
 export async function Run() {
@@ -41,15 +35,13 @@ export async function Run() {
 		return;
 	}
 
-	// Schedule processing job
-	setInterval(() => {
-		auditor.Check(txQueue, "Tx queue is nil");
-		if (txQueue.Length() === 0) {
-			return;
-		}
+	// Schedule dump job
+	await dump.Run();
 
-		dumpJob.push(txQueue).catch((err) => log.RequestId().error(err));
-	}, DefaultLoopInterval);
+	// Schedule callback job
+	if (conf.callback) {
+		await callback.Run();
+	}
 
 	// Push PullBlock job
 	PushJob({
@@ -98,8 +90,10 @@ async function queryTx(opts: Options = {
 	txType: [TxTypeTransfer],
 	fromBlock: DefaultFromBlock
 }): Promise<void> {
-	log.RequestId().trace("EXEC JOB(%s), QueryTx(blocks[%d,%d]) running... QueryTxJobsCount=%d",
-		opts.txType, opts.fromBlock, opts.toBlock, queryTxJobs.length());
+	log.RequestId().trace("EXEC JOB(QueryTx|id:%s|type:%s), blocks[%d,%d], TotalJobs=%d",
+		opts.jobId, opts.txType, opts.fromBlock, opts.toBlock, queryTxJobs.length());
+
+	const conf = customConfig.GetCrawler();
 
 	const provider = network.MyProvider.Get();
 
@@ -132,6 +126,7 @@ async function queryTx(opts: Options = {
 				blockNumber: tx.blockNumber,
 				blockHash: tx.blockHash,
 				blockTimestamp: block.timestamp,
+				blockDatetime: util.time.GetUnixTimestamp(block.timestamp, 'UTC'),
 				txHash: tx.hash,
 				from: tx.from,
 				to: tx.to,
@@ -143,13 +138,18 @@ async function queryTx(opts: Options = {
 				gasUsed: receipt.gasUsed,
 			}
 
-			// Push compact tx to queue
-			txQueue.Push(compactTx);
+			// Push compactTx to dump queue
+			dump.Push(compactTx);
+
+			// Push compactTx to callback queue
+			if (conf.callback) {
+				callback.Push(compactTx);
+			}
 		}
 	}
 
-	log.RequestId().trace("JOB(%s) FINISHED, QueryTx(blocks[%d,%d]), QueryTxJobsCount=%d",
-		opts.txType, opts.fromBlock, opts.toBlock, queryTxJobs.length());
+	log.RequestId().trace("FINISHED JOB(QueryTx|id:%s|type:%s) , blocks[%d,%d], TotalJobs=%d",
+		opts.jobId, opts.txType, opts.fromBlock, opts.toBlock, queryTxJobs.length());
 
 	return;
 }
@@ -194,77 +194,24 @@ async function pullBlocks(opts: Options = {
 		if (blockRange >= 0 && blockRange <= 1) {
 			log.RequestId().debug("Catch up the latest block(%d)", blockNumber);
 		}
-		log.RequestId().trace("PUSH JOB, blocks[%d,%d](range=%d), queryTxJobs=%d", nextFrom, nextTo, blockRange, queryTxJobs.length());
 
-		queryTxJobs.push({
+		const jobOpts = {
+			jobId: NewJobID(),      // Job ID
 			txType: opts.txType,    // Transaction type: transfer
 			fromBlock: nextFrom,    // Fetch from block number
 			toBlock: nextTo,        // Fetch to block number
-		}).catch((err) => log.RequestId().error(err));
+		}
+		log.RequestId().trace("PUSH JOB(QueryTx|id:%s|type:%s), blocks[%d,%d](range=%d), TotalJobs=%d",
+			jobOpts.jobId, opts.txType, nextFrom, nextTo, blockRange, queryTxJobs.length());
+		queryTxJobs.push(jobOpts).catch((err) => log.RequestId().error(err));
 
+		// Update progress
 		UpdateProgressBar(progress, nextTo - nextFrom);
 
 		nextFrom = nextTo + 1;
 	} while (nextFrom > 0);
 
-	log.RequestId().info("PullBlocks finished, options=%o", opts);
-
-	return;
-}
-
-// Dump tx callback
-async function callback(tx: CompactTx): Promise<void> {
-	try {
-		const conf = customConfig.GetCrawler();
-
-		// Check URL
-		if (!conf.callback) {
-			return;
-		}
-
-		// Callback
-		log.RequestId().debug("Crawler calling back(%s)... tx:", conf.callback, tx);
-		const rsp: Response = await got.post(conf.callback, {
-			json: tx
-		}).json();
-
-		log.RequestId().trace("Crawler callback response=", rsp);
-	} catch (e) {
-		log.RequestId().error("Crawler callback failed, error=", e);
-		return;
-	}
-
-	return;
-}
-
-// Dump tx
-async function dump(queue: util.Queue<CompactTx>): Promise<void> {
-	try {
-		const conf = customConfig.GetCrawler();
-		const len = queue.Length();
-		if (len === 0) {
-			return;
-		}
-
-		for (let i = 0; i < len; i++) {
-			const tx = queue.Shift();
-
-			// Callback (Optional)
-			await callback(tx);
-
-			// Dump tx to database
-			if (!conf.forceUpdate && await DB.Client().IsTxExists(tx.txHash)) {
-				log.RequestId().debug("Tx(%s) in block(%d) already exists, skipped", tx.txHash, tx.blockNumber);
-				return;
-			}
-
-			log.RequestId().info("Dumping tx to db, count=%d, tx=%o", i + 1, tx);
-			await DB.Client().Save(tx);
-		}
-	} catch (e) {
-		log.RequestId().error("Dump failed, error=", e);
-		return;
-	}
+	log.RequestId().info("All JOBs(QueryTx) are scheduled, options=%o", opts);
 
 	return;
 }

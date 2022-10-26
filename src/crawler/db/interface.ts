@@ -1,6 +1,6 @@
 import {utils} from 'ethers';
 import {ModelCtor} from 'sequelize';
-import {log, util} from '@jovijovi/pedrojs-common';
+import {log} from '@jovijovi/pedrojs-common';
 import {CompactTx} from '../types';
 import {ICompactTx} from './model';
 
@@ -20,7 +20,7 @@ export class Database implements IDatabase {
 				block_number: tx.blockNumber,
 				block_hash: tx.blockHash,
 				block_timestamp: tx.blockTimestamp,
-				block_datetime: util.time.GetUnixTimestamp(tx.blockTimestamp, 'UTC'),
+				block_datetime: tx.blockDatetime,
 				transaction_hash: tx.txHash,
 				from: tx.from,
 				to: tx.to,
@@ -37,6 +37,19 @@ export class Database implements IDatabase {
 		}
 
 		return;
+	}
+
+	// Save records in bulk, ignore duplicates
+	async BulkSave(records: any[]): Promise<any> {
+		try {
+			await this.ModelTx.bulkCreate(records,
+				{
+					ignoreDuplicates: true,
+				}
+			);
+		} catch (e) {
+			log.RequestId().error('BulkSave failed, error=', e.message);
+		}
 	}
 
 	// Check if tx is exists
